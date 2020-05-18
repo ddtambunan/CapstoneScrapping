@@ -14,14 +14,14 @@ def scrap(url):
     soup = BeautifulSoup(url_get.content,"html.parser")
     
     #Find the key to get the information
-    table = soup.find_all('table')[0]
-    df = pd.read_html(str(table))[0]
-    df.rename(columns=df.iloc[0], inplace = True)
+    table_result = soup.find_all('table')[2]
+    df = pd.read_html(str(table_result))[0]
+    df.rename(columns={0:'TANGGAL',1:'JUAL',2:'BELI'},inplace=True)  
     df.drop([0], inplace = True)
 
-    df[['ASK','BID']]= df[['ASK','BID']].astype('float')
-    df['ASK'] = df['ASK']/100
-    df['BID'] = df['BID']/100
+    df[['JUAL','BELI']]= df[['JUAL','BELI']].astype('float')
+    df['JUAL'] = df['JUAL']/100
+    df['BELI'] = df['BELI']/100
     
    #end of data wranggling
 
@@ -29,7 +29,7 @@ def scrap(url):
 
 @app.route("/")
 def index():
-    df = scrap('https://monexnews.com/kurs-valuta-asing.htm?kurs=JPY&searchdatefrom=01-01-2019&searchdateto=31-12-2019') #insert url here
+    df = scrap('https://news.mifx.com/kurs-valuta-asing?kurs=JPY&searchdatefrom=01-01-2019&searchdateto=31-12-2019') #insert url here
 
     #This part for rendering matplotlib
     fig = plt.figure(figsize=(5,2),dpi=300) #tempat resize grafik
